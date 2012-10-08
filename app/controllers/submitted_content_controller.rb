@@ -8,6 +8,9 @@ class SubmittedContentController < ApplicationController
     return unless current_user_id?(@participant.user_id)
     
     @assignment = @participant.assignment
+
+    # Create the list of provider auths for this user, if they have any
+    @auths = ProviderAuth.find_all_by_user_id(@participant.user_id)
     
     if @assignment.team_assignment && @participant.team.nil?
       flash[:alert] = "This is a team assignment. Before submitting your work, you must <a style='color: blue;' href='../../student_team/view/#{params[:id]}'>create a team</a>, even if you will be the only member of the team"
@@ -20,7 +23,7 @@ class SubmittedContentController < ApplicationController
     return unless current_user_id?(@participant.user_id)
     
     @assignment = @participant.assignment
-  end  
+  end
   
   def submit_hyperlink
     participant = AssignmentParticipant.find(params[:id])
@@ -44,6 +47,18 @@ class SubmittedContentController < ApplicationController
     rescue 
       flash[:error] = $!
     end    
+    redirect_to :action => 'edit', :id => participant.id
+  end
+
+  def submit_google_doc
+    participant = AssignmentParticipant.find(params[:id])
+    return unless current_user_id?(participant.user_id)
+
+    begin
+      participant.submit_google_doc(params['submission'])
+    rescue
+      flash[:error] = "The Google Doc is not valid. Reason: "+$!
+    end
     redirect_to :action => 'edit', :id => participant.id
   end
   

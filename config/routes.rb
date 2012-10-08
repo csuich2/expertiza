@@ -1,6 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :join_team_requests
 
+  # Routes for google oauth
+  map.callback '/auth/:provider/callback/:id', :controller => "provider_auths", :action => 'create'
+  map.failure '/auth/failure', :controller => 'provider_auths', :action => 'failure'
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:

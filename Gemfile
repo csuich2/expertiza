@@ -15,6 +15,14 @@ gem 'rgl', :require => 'rgl/adjacency'
 gem 'rubyzip', :require => 'zip/zip'
 gem 'rdoc'
 gem "rspec-rails", "1.3.2"
+
+# To use OmniOuth for authentication
+gem 'omniauth'
+# To use google-oauth2 strategy for authentication with Google
+gem 'omniauth-google-oauth2'
+# To use Google API Client library for Google Drive API
+gem 'google-api-client', :require => 'google/api_client'
+
 group :development do
   gem 'mongrel'
   gem 'ruby-debug'

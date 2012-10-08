@@ -1,3 +1,4 @@
+<% puts request[:REQUEST_PATH] %>
 <% if participant.get_hyperlinks.length > 0 %>
 	<%= render :partial => 'submitted_content/hyperlink', :locals => {:participant => participant} %>
 <% end %>
@@ -6,7 +7,28 @@
 	 <b>Submit a hyperlink:</b><BR/>
    <input type="text" name="submission" size=40 value="http://"><input type="submit" name="upload_link" value="Upload link"/>
 	<% end %>
-<% end %>	
+<% end %>
+
+<% google_auth = false %>
+<% @auths.each do |entry| %>
+    <% if entry.provider.titleize == "Google Oauth2" %>
+        <% google_auth = true %>
+    <% end %>
+<% end %>
+<% if participant.get_google_docs.length > 0 %>
+    <%= render :partial => 'submitted_content/google_doc', :locals => {:participant => participant} %>
+<% end %>
+<% if google_auth %>
+    <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
+        <% form_tag :action=>'submit_google_doc', :id => participant.id do %>
+            <b>Submit a Google Doc:</b><BR/>
+            <input type="text" name="submission" size=40 value="http://"><input type="submit" name="upload_link" value="Upload link"/>
+        <% end %>
+    <% end %>
+<% else %>
+    In order to import Docs from you Google account, you must provide OAuth access to Expertiza.
+    <%= link_to (image_tag 'google_oauth2_64.png'), url_for("/auth/google_oauth2?id=#{params[:id]}")%>
+<% end %>
 
 <% if participant.assignment.wiki_type_id == 1%>
   <%= render :partial => 'submitted_files', :locals => {:participant => participant, :stage => stage} %>

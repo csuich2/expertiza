@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111217162506) do
+ActiveRecord::Schema.define(:version => 20121007234802) do
 
   create_table "assignment_questionnaires", :force => true do |t|
     t.integer "assignment_id"
@@ -202,14 +202,14 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
   end
 
   create_table "participants", :force => true do |t|
-    t.boolean  "submit_allowed",       :default => true
-    t.boolean  "review_allowed",       :default => true
+    t.boolean  "submit_allowed",        :default => true
+    t.boolean  "review_allowed",        :default => true
     t.integer  "user_id"
     t.integer  "parent_id"
     t.integer  "directory_num"
     t.datetime "submitted_at"
     t.boolean  "permission_granted"
-    t.integer  "penalty_accumulated",  :default => 0,    :null => false
+    t.integer  "penalty_accumulated",   :default => 0,    :null => false
     t.text     "submitted_hyperlinks"
     t.float    "grade"
     t.string   "type"
@@ -217,6 +217,7 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
     t.integer  "topic_id"
     t.datetime "time_stamp"
     t.text     "digital_signature"
+    t.text     "submitted_google_docs"
   end
 
   add_index "participants", ["user_id"], :name => "fk_participant_users"
@@ -532,6 +533,17 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
 
   create_table "wiki_types", :force => true do |t|
     t.string "name", :default => "", :null => false
+  end
+
+  create_table :provider_auths do |t|
+    t.integer "user_id"
+    t.string "provider"
+    t.string "uid"
+    t.string "access_token"
+    t.string "refresh_token"
+
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

@@ -26,7 +26,7 @@ class StudentTaskController < ApplicationController
           current_folder = DisplayOption.new
           current_folder.name = ""
 
-          urls = participant.get_hyperlinks
+          urls = participant.get_hyperlinks+participant.get_google_docs
           if  (participant.resubmission_times.size >0) or (!urls.empty?)
             @taskrevisions << participant
           else

@@ -1,0 +1,10 @@
+<b>Google Docs</b>&nbsp;&nbsp;&nbsp;<a href="#" id="urlLink" name="urlLink" onClick="toggleElement('google_docs','links');return false;">hide links</a><br/>
+  <div id="google_docs" style="">
+   <ul>
+    <% docs = participant.get_google_docs %>
+    <% docs.each{
+       | link | %>
+        <li><a href="<%= link %>" target="new"><%= link %></a></li>
+  <% } %>
+  </ul>
+</div>
