@@ -20,15 +20,13 @@
 <% end %>
 <% if google_auth %>
     <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
-        <% form_tag :action=>'submit_google_doc', :id => participant.id do %>
-            <b>Submit a Google Doc:</b><BR/>
-            <input type="text" name="submission" size=40 value="http://"><input type="submit" name="upload_link" value="Upload link"/>
-        <% end %>
+        <%= link_to "Add a Google Doc", :controller => 'google_doc',
+                :action => 'index',
+                :participant_id => participant.id %>
     <% end %>
-<% else %>
-    In order to import Docs from you Google account, you must provide OAuth access to Expertiza.
-    <%= link_to (image_tag 'google_oauth2_64.png'), url_for("/auth/google_oauth2?id=#{params[:id]}")%>
 <% end %>
+In order to import Docs from you Google account, you must provide OAuth access to Expertiza.
+<%= link_to (image_tag 'google_oauth2_64.png'), url_for("/auth/google_oauth2?id=#{params[:id]}")%>
 
 <% if participant.assignment.wiki_type_id == 1%>
   <%= render :partial => 'submitted_files', :locals => {:participant => participant, :stage => stage} %>

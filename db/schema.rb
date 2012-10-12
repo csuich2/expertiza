@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121007234802) do
+ActiveRecord::Schema.define(:version => 20121010220950) do
 
   create_table "assignment_questionnaires", :force => true do |t|
     t.integer "assignment_id"
@@ -229,6 +229,16 @@ ActiveRecord::Schema.define(:version => 20121007234802) do
   create_table "plugin_schema_info", :id => false, :force => true do |t|
     t.string  "plugin_name"
     t.integer "version"
+  end
+
+  create_table "provider_auths", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "provider"
+    t.string   "uid"
+    t.string   "access_token"
+    t.string   "refresh_token"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "question_advices", :force => true do |t|
@@ -533,17 +543,6 @@ ActiveRecord::Schema.define(:version => 20121007234802) do
 
   create_table "wiki_types", :force => true do |t|
     t.string "name", :default => "", :null => false
-  end
-
-  create_table :provider_auths do |t|
-    t.integer "user_id"
-    t.string "provider"
-    t.string "uid"
-    t.string "access_token"
-    t.string "refresh_token"
-
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
 end

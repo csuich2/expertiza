@@ -55,6 +55,7 @@ SiteController.create(:name => 'invitation', :builtin => false, :permission_id =
 SiteController.create(:name => 'survey', :builtin => false, :permission_id => Permission.find_by_name('administer assignments').id)
 SiteController.create(:name => 'password_retrieval', :builtin => false, :permission_id => Permission.find_by_name('public actions - execute').id)
 SiteController.create(:name => 'submitted_content', :builtin => false, :permission_id => Permission.find_by_name('do assignments').id)
+SiteController.create(:name => 'google_doc', :builtin => false, :permission_id => Permission.find_by_name('do assignments').id)
 SiteController.create(:name => 'eula', :builtin => false, :permission_id => Permission.find_by_name('do assignments').id)
 SiteController.create(:name => 'student_review', :builtin => false, :permission_id => Permission.find_by_name('do assignments').id)
 SiteController.create(:name => 'publishing', :builtin => false, :permission_id => Permission.find_by_name('do assignments').id)
