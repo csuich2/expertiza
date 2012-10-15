@@ -4,7 +4,8 @@
     <% @result_hash['items'].each do |i| %>
         <a href="<%= i['alternateLink'] %>"><%= i['title'] %></a>
         <% form_tag :controller => 'google_doc', :action => 'create',
-                    :fileId => i['id'], :participant_id => @participant.id do %>
+                    :fileId => i['id'], :participant_id => @participant.id,
+                    :link => i['alternateLink'] do %>
             <%= submit_tag "Submit" %>
         <% end %>
         <br/>

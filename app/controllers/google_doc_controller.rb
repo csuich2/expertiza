@@ -54,8 +54,8 @@ class GoogleDocController < ApplicationController
 
   def create
     # TODO why do I have to use @_params here? For some reason, just params doesn't work
-    if @_params[:fileId] == nil
-      flash[:error] = "Could not submit Google Doc: Missing link!"
+    if @_params[:fileId] == nil || @_params[:link] == nil
+      flash[:error] = "Could not submit Google Doc: Missing parameter!"
       redirect_to_index
       return
     end
@@ -63,26 +63,56 @@ class GoogleDocController < ApplicationController
     client = build_client
     # Build the drive API object
     drive = build_drive(client)
-    # Setup the params that we need to set for the API call
-    params = {'role' => "reader",
-              'type' => "anyone",
-              'value' => "",
-              'additionalRoles' => ["commenter"],
-              'withLink' => true }
-    # Create the permission object using the params
-    new_permission = drive.permissions.insert.request_schema.new(params)
-    # Send the request to Google
+    # Retrieve a list of the file's permissions
+    params = {
+        'fileId' => @_params[:fileId],
+    }
     result = client.execute(
-        :api_method => drive.permissions.insert,
-        :body_object => new_permission,
-        :parameters => { 'fileId' => @_params[:fileId] })
-    # If there was an error updating the permissions, redirect to the index and show an error
+        :api_method => drive.permissions.list,
+        :parameters => params
+    )
+    # If there was an error, bail out
     if result.status != 200
-      # TODO show an actual error message
-      flash[:error] = "Unable to update permissions. Please try again."
+      flash[:error] = "Unable to update permissions. #{result.data['error']['message']}"
       redirect_to_index
       return
     end
+    permissions = result.data['items']
+    permissions = permissions.select {|i| i['type'] == 'anyone'}
+    # If there are no entries with 'type' = 'anyone', we need to create one.
+    # Otherwise, we'll update the existing one
+    if permissions.size == 0
+      params = {
+          'type' => 'anyone',
+          'role' => 'reader',
+          'value' => '',
+          'additionalRoles' => ['commenter'],
+          'withLink' => true,
+      }
+      result = client.execute(
+          :api_method => drive.permissions.insert,
+          :body_object => drive.permissions.insert.request_schema.new(params),
+          :parameters => {'fileId' => @_params[:fileId]}
+      )
+    else
+      params = {
+          'role' => permissions[0]['role'],
+          'additionalRoles' => ['commenter'],
+      }
+      result = client.execute(
+          :api_method => drive.permissions.update,
+          :body_object => drive.permissions.update.request_schema.new(params),
+          :parameters => {'fileId' => @_params[:fileId], 'permissionId' => permissions[0]['id']}
+      )
+    end
+    # If there was an error updating the permissions, redirect to the index and show an error
+    if result.status != 200
+      flash[:error] = "Unable to update permissions. #{result.data['error']['message']}"
+      redirect_to_index
+      return
+    end
+    # Now submit the link to the database
+    @participant.submit_google_doc(@_params[:link])
     redirect_to :controller => 'submitted_content', :action => 'edit', :id => @_params[:participant_id]
   end
 
