@@ -4,7 +4,7 @@
 <% end %>
 <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
   <% form_tag :action=>'submit_hyperlink', :id => participant.id do %> 
-	 <b>Submit a hyperlink:</b><BR/>
+	 <b>Submit a hyperlink:</b>
    <input type="text" name="submission" size=40 value="http://"><input type="submit" name="upload_link" value="Upload link"/>
 	<% end %>
 <% end %>
@@ -19,8 +19,9 @@
     <%= render :partial => 'submitted_content/google_doc', :locals => {:participant => participant} %>
 <% end %>
 <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
-    In order to import Docs from you Google account, you must provide OAuth access to Expertiza.<br/>
-    Note: If you are seeing errors attempting to submit a document, try re-authenticating with Google.<br/>
+    <br/><b>Google documents: </b> In order to import documents from your Google account, you must authorize Expertiza to access your account.<br/>
+    Click google icon for authorization.
+    Note: If you are seeing errors while attempting to submit a document, try re-authenticating with Google.<br/>
     <%= link_to (image_tag 'google_oauth2_64.png'), url_for("/auth/google_oauth2?id=#{params[:id]}")%><br/>
     <% if google_auth %>
         <%= link_to "Add a Google Doc", :controller => 'google_doc',

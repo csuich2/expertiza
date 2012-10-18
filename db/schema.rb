@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121010220950) do
+ActiveRecord::Schema.define(:version => 20121018032808) do
 
   create_table "assignment_questionnaires", :force => true do |t|
     t.integer "assignment_id"
@@ -109,6 +109,13 @@ ActiveRecord::Schema.define(:version => 20121010220950) do
 
   create_table "deadline_types", :force => true do |t|
     t.string "name", :limit => 32
+  end
+
+  create_table "document_links", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "hyperlink"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "due_dates", :force => true do |t|
