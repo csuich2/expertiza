@@ -15,9 +15,6 @@
         <% google_auth = true %>
     <% end %>
 <% end %>
-<% if participant.get_google_docs.length > 0 %>
-    <%= render :partial => 'submitted_content/google_doc', :locals => {:participant => participant} %>
-<% end %>
 <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
     <br/><b>Google documents: </b> In order to import documents from your Google account, you must authorize Expertiza to access your account.<br/>
     Click google icon for authorization.

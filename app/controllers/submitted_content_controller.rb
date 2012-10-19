@@ -48,18 +48,6 @@ class SubmittedContentController < ApplicationController
     rescue 
       flash[:error] = $!
     end    
-    redirect_to :action => 'edit', :id =>  participant.id
-  end
-
-  def submit_google_doc
-    participant = AssignmentParticipant.find(params[:id])
-    return unless current_user_id?(participant.user_id)
-
-    begin
-      participant.submit_google_doc(params['submission'])
-    rescue
-      flash[:error] = "The Google Doc is not valid. Reason: "+$!
-    end
     redirect_to :action => 'edit', :id => participant.id
   end
   

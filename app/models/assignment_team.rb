@@ -85,14 +85,6 @@ class AssignmentTeam < Team
     end
     return links
   end
-
-  def get_google_docs
-    docs = Array.new
-    for team_member in self.get_participants
-      docs.concat(team_member.get_google_docs_array)
-    end
-    return docs
-  end
   
   def get_path
     self.get_participants.first.get_path

@@ -112,7 +112,7 @@ class GoogleDocController < ApplicationController
       return
     end
     # Now submit the link to the database
-    @participant.submit_google_doc(@_params[:link])
+    @participant.submmit_hyperlink(@_params[:link])
     redirect_to :controller => 'submitted_content', :action => 'edit', :id => @_params[:participant_id]
   end
 

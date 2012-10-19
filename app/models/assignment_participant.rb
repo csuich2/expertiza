@@ -35,8 +35,7 @@ class AssignmentParticipant < Participant
   def has_submissions?
     return ((get_submitted_files.length > 0) or 
             (get_wiki_submissions.length > 0) or 
-            (get_hyperlinks_array.length > 0) or
-            (get_google_docs_array.length > 0))
+            (get_hyperlinks_array.length > 0))
   end
 
 # END of contributor methods
@@ -119,54 +118,6 @@ class AssignmentParticipant < Participant
 
   def get_hyperlinks_array
     self.submitted_hyperlinks.nil? ? [] : YAML::load(self.submitted_hyperlinks)
-  end
-
-  # Appends the google doc to a list that is stored in YAML format in the DB
-  # @exception  If is google doc was already there
-  #             If it is an invalid URL
-  def submit_google_doc(google_doc)
-    google_doc.strip!
-    raise "The Google Doc cannot be empty" if google_doc.empty?
-
-    url = URI.parse(google_doc)
-
-    # If not a valid URL, it will throw an exception
-    Net::HTTP.start(url.host, url.port)
-
-    google_docs = get_google_docs_array
-
-    google_docs << google_doc
-    self.submitted_google_docs = YAML::dump(google_docs)
-
-    self.save
-  end
-
-  # Note: This method is not used yet. It is here in the case it will be needed.
-  # @exception  If the index does not exist in the array
-  def remove_google_doc(index)
-    google_docs = get_google_docs
-    raise "The link does not exist" unless index < google_docs.size
-
-    google_docs.delete_at(index)
-    self.submitted_google_docs = google_docs.empty? ? nil : YAML::dump(google_docs)
-
-    self.save
-  end
-
-  # TODO:REFACTOR: This shouldn't be handled using an if statement, but using
-  # polymorphism for individual and team participants
-  def get_google_docs
-    if self.team
-      links = self.team.get_google_docs
-    else
-      links = get_google_docs_array
-    end
-
-    return links
-  end
-
-  def get_google_docs_array
-    self.submitted_google_docs.nil? ? [] : YAML::load(self.submitted_google_docs)
   end
 
   #Copy this participant to a course
