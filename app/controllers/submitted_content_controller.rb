@@ -40,14 +40,15 @@ class SubmittedContentController < ApplicationController
   # Note: This is not used yet in the view until we all decide to do so
   def remove_hyperlink
     participant = AssignmentParticipant.find(params[:id])
-    return unless current_user_id?(participant.user_id)
+    document_link = SubmittedContentLink.find_by_hyperlink(params[:remove_hyperlink])
+    return unless current_user_id?(document_link.user_id)
 
     begin
-      participant.remove_hyperlink(params['index'].to_i)
+      SubmittedContentLink.delete(document_link.id)
     rescue 
       flash[:error] = $!
     end    
-    redirect_to :action => 'edit', :id => participant.id
+    redirect_to :action => 'edit', :id =>  participant.id
   end
 
   def submit_google_doc

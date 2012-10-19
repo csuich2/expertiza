@@ -76,13 +76,21 @@ class AssignmentParticipant < Participant
 
     # If not a valid URL, it will throw an exception
     Net::HTTP.start(url.host, url.port)
+    # New Hyperlink Approach: Check if hyperlink already exists in submitted documents. Add only if it does not exist
+    if SubmittedContentLink.find_by_hyperlink(hyperlink) == nil
+      SubmittedContentLink.create(:user_id => self.user_id, :hyperlink => hyperlink)
+    else
+      raise "Hyperlink already exists in submitted hyperlink(s)."
+    end
+    #
 
+    # Old Approach
     hyperlinks = get_hyperlinks_array
-
     hyperlinks << hyperlink
     self.submitted_hyperlinks = YAML::dump(hyperlinks)
-
     self.save
+    #
+
   end
 
   # Note: This method is not used yet. It is here in the case it will be needed.
