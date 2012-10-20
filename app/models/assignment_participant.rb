@@ -121,6 +121,10 @@ class AssignmentParticipant < Participant
     self.submitted_hyperlinks.nil? ? [] : YAML::load(self.submitted_hyperlinks)
   end
 
+  def get_submitted_content_links
+    links = SubmittedContentLink.get_submitted_links(self.id)
+  end
+
   # Appends the google doc to a list that is stored in YAML format in the DB
   # @exception  If is google doc was already there
   #             If it is an invalid URL
