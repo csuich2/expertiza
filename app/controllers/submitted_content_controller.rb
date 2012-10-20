@@ -39,11 +39,11 @@ class SubmittedContentController < ApplicationController
 
   # Note: This is not used yet in the view until we all decide to do so
   def remove_hyperlink
-    document_link = SubmittedContentLink.find_by_hyperlink(params[:remove_hyperlink])
-    participant_id = document_link.participant_id
+    link_to_delete = SubmittedContentLink.find_by_id(params[:remove_hyperlink_id])
+    participant_id = link_to_delete.participant_id
 
     begin
-      SubmittedContentLink.delete(document_link.id)
+      SubmittedContentLink.delete(link_to_delete.id)
     rescue 
       flash[:error] = $!
     end    
