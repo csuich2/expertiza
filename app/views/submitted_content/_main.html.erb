@@ -9,12 +9,8 @@
 	<% end %>
 <% end %>
 
-<% google_auth = false %>
-<% @auths.each do |entry| %>
-    <% if entry.provider.titleize == "Google Oauth2" %>
-        <% google_auth = true %>
-    <% end %>
-<% end %>
+<% # See if this user has authenticated with Google %>
+<% google_auth = ProviderAuth.user_has_google_auths?(@participant.user_id) %>
 <% if stage != "Complete" and controller.controller_name == 'submitted_content' %>
     <br/><b>Google documents: </b> In order to import documents from your Google account, you must authorize Expertiza to access your account.<br/>
     Click google icon for authorization.
