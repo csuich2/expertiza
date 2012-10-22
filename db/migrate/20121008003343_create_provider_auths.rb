@@ -6,6 +6,7 @@ class CreateProviderAuths < ActiveRecord::Migration
       t.column "uid", :string
       t.column "access_token", :string
       t.column "refresh_token", :string
+      t.column "expires", :integer
 
       t.column "created_at", :datetime
       t.column "updated_at", :datetime

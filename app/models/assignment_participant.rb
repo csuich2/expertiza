@@ -68,7 +68,7 @@ class AssignmentParticipant < Participant
   # Appends the hyperlink to a list that is stored in YAML format in the DB
   # @exception  If is hyperlink was already there
   #             If it is an invalid URL
-  def submmit_hyperlink(hyperlink)
+  def submit_hyperlink(hyperlink)
     hyperlink.strip!
     raise "The hyperlink cannot be empty" if hyperlink.empty?
 
@@ -77,7 +77,7 @@ class AssignmentParticipant < Participant
     # If not a valid URL, it will throw an exception
     Net::HTTP.start(url.host, url.port)
     # New Hyperlink Approach: Check if hyperlink already exists in submitted documents. Add only if it does not exist
-    if SubmittedContentLink.find_by_hyperlink(hyperlink) == nil
+    if SubmittedContentLink.find_by_hyperlink_and_participant_id(hyperlink, self.id) == nil
       SubmittedContentLink.create(:participant_id => self.id, :hyperlink => hyperlink)
     else
       raise "Hyperlink already exists in submitted documents."
@@ -91,6 +91,12 @@ class AssignmentParticipant < Participant
     self.save
     #
 
+  end
+
+  # Returns true if the given hyperlink has already been submitted by the participant
+  def has_hyperlink_been_submitted(hyperlink)
+    return true if SubmittedContentLink.find_by_hyperlink_and_participant_id(hyperlink, self.id) != nil
+    return false
   end
 
   # Note: This method is not used yet. It is here in the case it will be needed.
@@ -432,7 +438,7 @@ class AssignmentParticipant < Participant
 
 private
 
-  # Use submmit_hyperlink(), remove_hyperlink() instead
+  # Use submit_hyperlink(), remove_hyperlink() instead
   def submitted_hyperlinks=(val)
     write_attribute :submitted_hyperlinks, val
   end

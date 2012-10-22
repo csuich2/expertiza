@@ -34,5 +34,6 @@ group :test do
   gem 'gherkin', '~> 2.7.6'
   gem 'capybara', '0.3.9'
   gem 'database_cleaner', '>= 0.5.0', :require => false
+  # TODO the google-api-client gem requires a newwer version of launchy - is it ok to comment this one out?
   #gem 'launchy', '0.4.0'
 end

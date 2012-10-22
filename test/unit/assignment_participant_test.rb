@@ -81,12 +81,12 @@ class AssignmentParticipantTest < ActiveSupport::TestCase
     end
   end
 
-  def test_submmit_first_hyperlink
+  def test_submit_first_hyperlink
     participant = participants(:par0)
     assert_nil participant.submitted_hyperlinks
 
     url = "http://www.ncsu.edu"
-    participant.submmit_hyperlink(url)
+    participant.submit_hyperlink(url)
     assert_not_nil participant.submitted_hyperlinks
     assert_equal YAML::dump([url]), participant.submitted_hyperlinks
   end
@@ -99,7 +99,7 @@ class AssignmentParticipantTest < ActiveSupport::TestCase
     assert_equal urls.size, 2
     
     url = "http://www.csc.ncsu.edu/"
-    participant.submmit_hyperlink(url)
+    participant.submit_hyperlink(url)
 
     urls = YAML::load participant.submitted_hyperlinks
     assert_equal urls.size, 3
@@ -138,7 +138,7 @@ class AssignmentParticipantTest < ActiveSupport::TestCase
   def test_reject_empty_hyperlink
     participant = participants(:par1)
     assert_raise RuntimeError do
-      participant.submmit_hyperlink ""
+      participant.submit_hyperlink ""
     end
   end
 
