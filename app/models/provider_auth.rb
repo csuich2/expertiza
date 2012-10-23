@@ -13,6 +13,7 @@ class ProviderAuth < ActiveRecord::Base
       authEntry.uid = auth['uid']
       authEntry.access_token = auth['credentials']['token']
       authEntry.refresh_token = auth['credentials']['refresh_token']
+      authEntry.expires = auth['credentials']['expires_at']
       authEntry.user_id = id
       authEntry.save
     else
@@ -25,17 +26,25 @@ class ProviderAuth < ActiveRecord::Base
 
   def self.user_has_google_auths?(user_id)
     # Get all the provider auths for the specified user
-    auths = ProviderAuth.find_all_by_user_id(user_id)
-    # Loop through all the auths and return true if we find a Google Oauth2 entry
-    auths.each do |entry|
-      if entry.provider.titleize == "Google Oauth2"
-        return true
-      end
+    auths = self.get_google_oauth_for_user(user_id)
+    if auths.size > 0
+      return true
+    else
+      return false
     end
-    return false
   end
 
   def self.get_google_oauth_for_user(user_id)
-    authEntry = ProviderAuth.all(:conditions => "user_id = #{user_id} AND provider='google_oauth2'").first
+    auths = ProviderAuth.all(:conditions => "user_id = #{user_id} AND provider='google_oauth2'")
+
+    validAuths = [];
+    auths.each do |entry|
+      if Time.now >= Time.at(entry.expires)
+        entry.destroy
+      else
+        validAuths << entry
+      end
+    end
+    return validAuths
   end
 end

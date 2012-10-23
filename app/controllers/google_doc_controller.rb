@@ -1,14 +1,7 @@
 class GoogleDocController < ApplicationController
-  before_filter :check_participant
+  before_filter :check_participant, :check_google_auth
 
   def index
-    # Make sure the user has google auth setup, otherwise we can't
-    # access their Google Docs
-    unless ProviderAuth.user_has_google_auths?(@participant.user_id)
-      redirect_to_edit_submitted_content(@_params[:participant_id])
-      return
-    end
-
     # If the user searched or asked for recent docs
     if params[:title_search] || params[:list_count]
       # Build the Google Docs API Client
@@ -54,6 +47,14 @@ class GoogleDocController < ApplicationController
       redirect_to_index
       return
     end
+
+    # Before we go any farther, make sure this document hasn't already been submitted
+    if @participant.has_hyperlink_been_submitted(@_params[:link])
+      flash[:error] = "That Google Doc has already been submitted for this assignment."
+      redirect_to_index
+      return
+    end
+
     # Build the Google Docs API Client
     client = build_client
     # Build the drive API object
@@ -107,7 +108,7 @@ class GoogleDocController < ApplicationController
       return
     end
     # Now submit the link to the database
-    @participant.submmit_hyperlink(@_params[:link])
+    @participant.submit_hyperlink(@_params[:link])
     redirect_to_edit_submitted_content(@_params[:participant_id])
   end
 
@@ -119,6 +120,13 @@ class GoogleDocController < ApplicationController
     @user_id = @participant.user_id
   end
 
+  def check_google_auth
+    if !ProviderAuth.user_has_google_auths?(@participant.user_id)
+      flash[:error] = "No provider auth found for Google. Please authenticate with Google."
+      redirect_to_edit_submitted_content(@participant.id)
+    end
+  end
+
   def redirect_to_index
     redirect_to :action => 'index', :participant_id => params[:participant_id]
   end
@@ -128,7 +136,7 @@ class GoogleDocController < ApplicationController
   end
 
   def build_client
-    authEntry = ProviderAuth.get_google_oauth_for_user(@user_id)
+    authEntry = ProviderAuth.get_google_oauth_for_user(@user_id).first
     client = Google::APIClient.new
     client.authorization.client_id = authEntry.access_token #saving token in client_id to maintain uniqueness
     client.authorization.scope = "https://docs.google.com/feeds/"

@@ -237,6 +237,7 @@ ActiveRecord::Schema.define(:version => 20121019052039) do
     t.string   "uid"
     t.string   "access_token"
     t.string   "refresh_token"
+    t.integer  "expires"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
