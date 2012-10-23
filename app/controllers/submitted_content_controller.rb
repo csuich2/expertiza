@@ -26,8 +26,15 @@ class SubmittedContentController < ApplicationController
     participant = AssignmentParticipant.find(params[:id])
     return unless current_user_id?(participant.user_id)
 
+    # If the submitted link has already been submitted, show an error
+    if participant.has_hyperlink_been_submitted(params['submission'])
+      flash[:error] = "That hyperlink has already been submitted."
+      redirect_to :action => 'edit', :id => participant.id
+      return
+    end
+
     begin
-      participant.submmit_hyperlink(params['submission'])
+      participant.submit_hyperlink(params['submission'])
     rescue 
       flash[:error] = "The URL or URI is not valid. Reason: "+$!
     end    
@@ -60,7 +67,7 @@ class SubmittedContentController < ApplicationController
     end
     redirect_to :action => 'edit', :id => participant.id
   end
-  
+
   def submit_file
     participant = AssignmentParticipant.find(params[:id])
     return unless current_user_id?(participant.user_id)
