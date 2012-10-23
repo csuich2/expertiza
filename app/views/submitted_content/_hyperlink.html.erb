@@ -4,7 +4,7 @@
     <% participant.get_submitted_content_links.each{
        | link | %>      
         <li><a href="<%= link.hyperlink %>" target="new"><%= link.hyperlink %></a>
-         &nbsp(<%= link_to "delete", :action => 'remove_hyperlink', :remove_hyperlink_id => link.id %>)</li>
+         &nbsp(<%= link_to "delete", :action => 'remove_hyperlink', :remove_hyperlink => link.hyperlink, :participant_id => link.participant_id %>)</li>
   <% } %>
   </ul> 
 </div>

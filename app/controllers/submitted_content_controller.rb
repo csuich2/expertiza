@@ -34,23 +34,25 @@ class SubmittedContentController < ApplicationController
     redirect_to :action => 'edit', :id => participant.id
   end    
 
-  # Note: This is not used yet in the view until we all decide to do so
+  # Delete hyperlink of a participant's submitted document
   def remove_hyperlink
-    link_to_delete = SubmittedContentLink.find_by_id(params[:remove_hyperlink_id])
-    participant_id = link_to_delete.participant_id
+    # participant id sent from browser
+    current_participant_id = params[:participant_id]
+    hyperlink_to_delete = params[:remove_hyperlink]
+    # find the link from the submitted content link table.
+    link_to_delete = SubmittedContentLink.find_by_participant_id_and_hyperlink(current_participant_id, hyperlink_to_delete )
 
     begin
       SubmittedContentLink.delete(link_to_delete.id)
     rescue 
-      flash[:error] = $!
+      flash[:error] = "The URL or URI is not valid" +$!
     end    
-    redirect_to :action => 'edit', :id =>  participant_id
+    redirect_to :action => 'edit', :id =>  current_participant_id
   end
 
   def submit_google_doc
     participant = AssignmentParticipant.find(params[:id])
     return unless current_user_id?(participant.user_id)
-
     begin
       participant.submit_google_doc(params['submission'])
     rescue
