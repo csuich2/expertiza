@@ -16,8 +16,8 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
                   + "https://docs.google.com/feeds/ " \
                   + "https://docs.googleusercontent.com/"
 
-  provider :google_oauth2, '752047952073.apps.googleusercontent.com',
-                           'pTyD5YZF0fPAO3ZGT5Jh74HF',
+  provider :google_oauth2, 'CONSUMER_KEY',
+                           'CONSUMER_SECRET',
                            :scope => googleDocsScope
  end
 
