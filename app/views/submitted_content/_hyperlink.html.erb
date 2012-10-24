@@ -1,10 +1,10 @@
 <b>Submitted hyperlinks</b>&nbsp;<a href="#" id="urlLink" name="urlLink" onClick="toggleElement('url','links');return false;">hide links</a><br/>
   <div id="url" style="">  
    <ul>
-    <% participant.get_hyperlinks.each{
+    <% participant.get_submitted_content_links.each{
        | link | %>      
-        <li><a href="<%= link %>" target="new"><%= link %></a>
-          <%= link_to "Delete", :action => 'remove_hyperlink', :remove_hyperlink => link %></li>
+        <li><a href="<%= link.hyperlink %>" target="new"><%= link.hyperlink %></a>
+         &nbsp(<%= link_to "delete", :action => 'remove_hyperlink', :remove_hyperlink => link.hyperlink, :participant_id => link.participant_id %>)</li>
   <% } %>
   </ul> 
 </div>

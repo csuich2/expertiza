@@ -8,9 +8,6 @@ class SubmittedContentController < ApplicationController
     return unless current_user_id?(@participant.user_id)
     
     @assignment = @participant.assignment
-
-    # Create the list of provider auths for this user, if they have any
-    @auths = ProviderAuth.find_all_by_user_id(@participant.user_id)
     
     if @assignment.team_assignment && @participant.team.nil?
       flash[:alert] = "This is a team assignment. Before submitting your work, you must <a style='color: blue;' href='../../student_team/view/#{params[:id]}'>create a team</a>, even if you will be the only member of the team"
@@ -29,28 +26,48 @@ class SubmittedContentController < ApplicationController
     participant = AssignmentParticipant.find(params[:id])
     return unless current_user_id?(participant.user_id)
 
+    # If the submitted link has already been submitted, show an error
+    if participant.has_hyperlink_been_submitted(params['submission'])
+      flash[:error] = "That hyperlink has already been submitted."
+      redirect_to :action => 'edit', :id => participant.id
+      return
+    end
+
     begin
-      participant.submmit_hyperlink(params['submission'])
+      participant.submit_hyperlink(params['submission'])
     rescue 
       flash[:error] = "The URL or URI is not valid. Reason: "+$!
     end    
     redirect_to :action => 'edit', :id => participant.id
   end    
 
-  # Note: This is not used yet in the view until we all decide to do so
+  # Delete hyperlink of a participant's submitted document
   def remove_hyperlink
-    participant = AssignmentParticipant.find(params[:id])
-    document_link = SubmittedContentLink.find_by_hyperlink(params[:remove_hyperlink])
-    return unless current_user_id?(document_link.user_id)
+    # participant id sent from browser
+    current_participant_id = params[:participant_id]
+    hyperlink_to_delete = params[:remove_hyperlink]
+    # find the link from the submitted content link table.
+    link_to_delete = SubmittedContentLink.find_by_participant_id_and_hyperlink(current_participant_id, hyperlink_to_delete )
 
     begin
-      SubmittedContentLink.delete(document_link.id)
+      SubmittedContentLink.delete(link_to_delete.id)
     rescue 
-      flash[:error] = $!
+      flash[:error] = "The URL or URI is not valid" +$!
     end    
+    redirect_to :action => 'edit', :id =>  current_participant_id
+  end
+
+  def submit_google_doc
+    participant = AssignmentParticipant.find(params[:id])
+    return unless current_user_id?(participant.user_id)
+    begin
+      participant.submit_google_doc(params['submission'])
+    rescue
+      flash[:error] = "The Google Doc is not valid. Reason: "+$!
+    end
     redirect_to :action => 'edit', :id => participant.id
   end
-  
+
   def submit_file
     participant = AssignmentParticipant.find(params[:id])
     return unless current_user_id?(participant.user_id)

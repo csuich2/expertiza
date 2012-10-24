@@ -2,17 +2,12 @@ class GoogleDocController < ApplicationController
   before_filter :check_participant
 
   def index
-    # Create the list of provider auths for this user, if they have any
-    @auths = ProviderAuth.find_all_by_user_id(@participant.user_id)
     # Make sure the user has google auth setup, otherwise we can't
     # access their Google Docs
-    google_auth = false
-    @auths.each do |entry|
-      if entry.provider.titleize == "Google Oauth2"
-        google_auth = true
-      end
+    unless ProviderAuth.user_has_google_auths?(@participant.user_id)
+      redirect_to_edit_submitted_content(@_params[:participant_id])
+      return
     end
-    return unless google_auth
 
     # If the user searched or asked for recent docs
     if params[:title_search] || params[:list_count]
@@ -113,7 +108,7 @@ class GoogleDocController < ApplicationController
     end
     # Now submit the link to the database
     @participant.submmit_hyperlink(@_params[:link])
-    redirect_to :controller => 'submitted_content', :action => 'edit', :id => @_params[:participant_id]
+    redirect_to_edit_submitted_content(@_params[:participant_id])
   end
 
   private
@@ -128,8 +123,12 @@ class GoogleDocController < ApplicationController
     redirect_to :action => 'index', :participant_id => params[:participant_id]
   end
 
+  def redirect_to_edit_submitted_content(participant_id)
+    redirect_to :controller => 'submitted_content', :action => 'edit', :id => participant_id
+  end
+
   def build_client
-    authEntry = ProviderAuth.all(:conditions => "user_id = #{@user_id}").first
+    authEntry = ProviderAuth.get_google_oauth_for_user(@user_id)
     client = Google::APIClient.new
     client.authorization.client_id = authEntry.access_token #saving token in client_id to maintain uniqueness
     client.authorization.scope = "https://docs.google.com/feeds/"
