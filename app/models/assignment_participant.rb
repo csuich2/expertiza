@@ -35,7 +35,7 @@ class AssignmentParticipant < Participant
   def has_submissions?
     return ((get_submitted_files.length > 0) or
         (get_wiki_submissions.length > 0) or
-        (get_hyperlinks_array.length > 0))
+        (get_submitted_content_links.length > 0))
   end
 
 # END of contributor methods
@@ -81,16 +81,6 @@ class AssignmentParticipant < Participant
     else
       raise "Hyperlink already exists in submitted documents."
     end
-    #
-
-    # Old Approach
-    hyperlinks = get_hyperlinks_array
-
-    hyperlinks << hyperlink
-    self.submitted_hyperlinks = YAML::dump(hyperlinks)
-
-    self.save
-    #
 
   end
 
@@ -118,16 +108,13 @@ class AssignmentParticipant < Participant
     if self.team
       links = self.team.get_hyperlinks
     else
-      links = get_hyperlinks_array
+      links = get_submitted_content_links
     end
 
     return links
   end
 
-  def get_hyperlinks_array
-    self.submitted_hyperlinks.nil? ? [] : YAML::load(self.submitted_hyperlinks)
-  end
-
+  # Get submitted hyperlink based on current participant ID
   def get_submitted_content_links
     links = SubmittedContentLink.get_submitted_links(self.id)
   end

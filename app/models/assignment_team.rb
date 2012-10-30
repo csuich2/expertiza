@@ -81,7 +81,7 @@ class AssignmentTeam < Team
   def get_hyperlinks
     links = Array.new
     for team_member in self.get_participants 
-      links.concat(team_member.get_hyperlinks_array)
+      links.concat(team_member.get_submitted_content_links)
     end
     return links
   end
