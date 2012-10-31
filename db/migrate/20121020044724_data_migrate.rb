@@ -10,10 +10,12 @@ class DataMigrate < ActiveRecord::Migration
       link.participant_id = data[i].attributes['id']
       link.hyperlink = data[i].attributes['submitted_hyperlinks']
       link.save
-       end
+    end
+    remove_column :participants, :submitted_hyperlinks
     end
 
   def self.down
+    add_column :participants, :submitted_hyperlinks, :string
     part = Participant.new
     data = SubmittedContentLinks.find_by_sql("select submitted_content_links.participant_id, submitted_content_links.hyperlink from submitted_content_links")
     size = data.length
@@ -38,12 +40,13 @@ class DataMigrate < ActiveRecord::Migration
          part.id = k
         part.submitted_hyperlinks = v
          num = nil
-         else
-        linkh = Participant.find_by_sql("select participants.submitted_hyperlinks from participants where participants.id = #{k}")
-        linkh[0].attributes["submitted_hyperlinks"] << "--" << v
-        p linkh[0].attributes["submitted_hyperlinks"]
+        else
+        #linkh = Participant.find_by_sql("select participants.submitted_hyperlinks from participants where participants.id = #{k}")
+        #linkh[0].attributes["submitted_hyperlinks"] << "--" << v
+        #p linkh[0].attributes["submitted_hyperlinks"]
         part1 = Participant.find(k)
-        part1.update_attribute(:submitted_hyperlinks, linkh[0].attributes["submitted_hyperlinks"])
+        ##part1.update_attribute(:submitted_hyperlinks, linkh[0].attributes["submitted_hyperlinks"])
+        part1.update_attribute(:submitted_hyperlinks, v)
         end
      part.save
     end
