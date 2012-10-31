@@ -3,7 +3,7 @@ require 'yaml'
 require 'assignment_participant'
 
 class AssignmentParticipantTest < ActiveSupport::TestCase
-  fixtures :assignments, :users, :roles, :participants
+  fixtures :assignments, :users, :roles, :participants, :submitted_content_links
   
   def test_import
     row = Array.new
@@ -83,56 +83,37 @@ class AssignmentParticipantTest < ActiveSupport::TestCase
 
   def test_submit_first_hyperlink
     participant = participants(:par0)
-    assert_nil participant.submitted_hyperlinks
+    assert_equal 0, participant.get_submitted_content_links.size
 
     url = "http://www.ncsu.edu"
     participant.submit_hyperlink(url)
-    assert_not_nil participant.submitted_hyperlinks
-    assert_equal YAML::dump([url]), participant.submitted_hyperlinks
+    assert_not_equal 0, participant.get_submitted_content_links.size
+    assert_equal url, participant.get_submitted_content_links[0].hyperlink
   end
 
   def test_submit_third_hyperlink
     participant = participants(:par1)
-    assert_not_nil participant.submitted_hyperlinks
 
-    urls = YAML::load participant.submitted_hyperlinks
+    urls = participant.get_submitted_content_links
     assert_equal urls.size, 2
     
     url = "http://www.csc.ncsu.edu/"
     participant.submit_hyperlink(url)
 
-    urls = YAML::load participant.submitted_hyperlinks
+    urls = participant.get_submitted_content_links
     assert_equal urls.size, 3
-    assert_equal url, urls[2]
+    assert_equal url, urls[2].hyperlink
   end
 
-  def test_remove_second_hyperlink_of_three
-    participant = participants(:par2)
-    before_urls = YAML::load participant.submitted_hyperlinks
-    assert_equal before_urls.size, 3
-    
-    participant.remove_hyperlink(1)
-    after_urls = YAML::load participant.submitted_hyperlinks
-    
-    assert_equal after_urls.size, 2
-    assert_equal before_urls[0], after_urls[0]
-    assert_equal before_urls[2], after_urls[1]
-  end
+  def test_has_hyperlink_been_submitted
+    participant = participants(:par1)
 
-  def test_remove_one_hyperlink_of_one
-    participant = participants(:par3)
-    before_urls = YAML::load participant.submitted_hyperlinks
-    assert_equal before_urls.size, 1
-    
-    participant.remove_hyperlink(0)
-    assert_nil participant.submitted_hyperlinks
-  end
+    urls = participant.get_submitted_content_links
+    assert_not_equal 0, urls.size
 
-  def test_reject_remove_nonexistent_index
-    participant = participants(:par0)
-    assert_raise RuntimeError do
-      participant.remove_hyperlink(0)
-    end
+    assert_equal true, participant.has_hyperlink_been_submitted(urls[0].hyperlink)
+
+    assert_equal false, participant.has_hyperlink_been_submitted("http://somemadeupurl.com")
   end
 
   def test_reject_empty_hyperlink

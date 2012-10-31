@@ -90,18 +90,6 @@ class AssignmentParticipant < Participant
     return false
   end
 
-  # Note: This method is not used yet. It is here in the case it will be needed.
-  # @exception  If the index does not exist in the array
-  def remove_hyperlink(index)
-    hyperlinks = get_hyperlinks
-    raise "The link does not exist" unless index < hyperlinks.size
-
-    hyperlinks.delete_at(index)
-    self.submitted_hyperlinks = hyperlinks.empty? ? nil : YAML::dump(hyperlinks)
-
-    self.save
-  end
-
   # TODO:REFACTOR: This shouldn't be handled using an if statement, but using 
   # polymorphism for individual and team participants
   def get_hyperlinks

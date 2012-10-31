@@ -31,7 +31,13 @@ class GoogleDocController < ApplicationController
       # it to a variable the view can access
       if result.status == 200
         @result_hash = result.data.to_hash
-        @result_hash
+        # If there are not actually any results, flash an alert
+        if @result_hash['items'].size == 0
+          flash[:alert] = "No docs found."
+        # Otherwise, clear the alert so it doesn't stick around if previously shown
+        else
+          flash[:alert] = nil
+        end
       # If there was an error, display it
       else
         # TODO show the actual error
@@ -135,15 +141,20 @@ class GoogleDocController < ApplicationController
     redirect_to :controller => 'submitted_content', :action => 'edit', :id => participant_id
   end
 
+  # Builds and returns a Google OAuth client using the stored OAuth info
   def build_client
+    # Find the Google OAuth info for this user
     authEntry = ProviderAuth.get_google_oauth_for_user(@user_id).first
+    # Create the client
     client = Google::APIClient.new
+    # Set the client's id, scope and access token
     client.authorization.client_id = authEntry.access_token #saving token in client_id to maintain uniqueness
     client.authorization.scope = "https://docs.google.com/feeds/"
     client.authorization.access_token = authEntry.access_token
     client
   end
 
+  # Builds a Google Drive API from the Google OAuth client
   def build_drive(client)
     client.discovered_api('drive', 'v2')
   end

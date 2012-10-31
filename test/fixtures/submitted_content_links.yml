@@ -1,0 +1,23 @@
+scl1:
+  participant_id: <%= Fixtures.identify(:par1) %>
+  hyperlink: "http://www.ncsu.edu/"
+
+scl2:
+  participant_id: <%= Fixtures.identify(:par1) %>
+  hyperlink: "http://www.google.com"
+
+scl3:
+  participant_id: <%= Fixtures.identify(:par2) %>
+  hyperlink: "http://www.ncsu.edu"
+
+scl4:
+  participant_id: <%= Fixtures.identify(:par2) %>
+  hyperlink: "http://www.google.edu"
+
+scl5:
+  participant_id: <%= Fixtures.identify(:par2) %>
+  hyperlink: "http://www.csc.ncsu.edu"
+
+scl6:
+  participant_id: <%= Fixtures.identify(:par3) %>
+  hyperlink: "http://www.ncsu.edu"

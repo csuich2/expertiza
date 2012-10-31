@@ -1,15 +1,21 @@
 <h1>Find Google Doc to submit</h1>
-<% if @result_hash %>
+<% if @result_hash and @result_hash['items'].size > 0 %>
     <h2>Results</h2>
-    <% @result_hash['items'].each do |i| %>
-        <a href="<%= i['alternateLink'] %>"><%= i['title'] %></a>
-        <% form_tag :controller => 'google_doc', :action => 'create',
-                    :fileId => i['id'], :participant_id => @participant.id,
-                    :link => i['alternateLink'] do %>
-            <%= submit_tag "Submit" %>
+    <table class='general'>
+        <tr>
+            <th>Document</th>
+            <th>Action</th>
+        </tr>
+        <% @result_hash['items'].each do |i| %>
+            <tr>
+                <td><a href="<%= i['alternateLink'] %>"><%= i['title'] %></a></td>
+                <td>
+                    <%= link_to 'Submit', :controller => 'google_doc', :action => 'create',
+                                :fileId => i['id'], :participant_id => @participant.id, :link => i['alternateLink'] %>
+                </td>
+            </tr>
         <% end %>
-        <br/>
-    <% end %>
+    </table>
 <% end %>
 <h2>Search for Google Doc</h2>
 <% form_tag :controller => 'google_doc', :action => 'index', :participant_id => @participant.id do %>

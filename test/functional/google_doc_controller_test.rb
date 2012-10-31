@@ -1,8 +1,6 @@
 require 'test_helper'
 
+# TODO figure out how to actually test the Google Doc controller
+
 class GoogleDocControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
-  end
 end

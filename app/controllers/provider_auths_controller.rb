@@ -9,7 +9,6 @@ class ProviderAuthsController < ApplicationController
   end
 
   def create
-    # TODO fix this cause it's a hack!!!
     @user_id = session[:user].id
     # save the hash returned by omniauth
     auth = request.env["omniauth.auth"]
@@ -25,7 +24,6 @@ class ProviderAuthsController < ApplicationController
   end
 
   def failure
-    puts request.inspect
     render :text => request.env["omniauth.auth"].to_yaml rescue "Provider failed to authenticate"
   end
 

@@ -1,4 +1,3 @@
-<% puts request[:REQUEST_PATH] %>
 <% if participant.get_hyperlinks.length > 0 %>
 	<%= render :partial => 'submitted_content/hyperlink', :locals => {:participant => participant} %>
 <% end %>

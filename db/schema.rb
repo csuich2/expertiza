@@ -210,14 +210,12 @@ ActiveRecord::Schema.define(:version => 20121019052039) do
     t.datetime "submitted_at"
     t.boolean  "permission_granted"
     t.integer  "penalty_accumulated",                  :default => 0,    :null => false
-    t.string   "submitted_hyperlinks",  :limit => 500
     t.float    "grade"
     t.string   "type"
     t.string   "handle"
     t.integer  "topic_id"
     t.datetime "time_stamp"
     t.text     "digital_signature"
-    t.text     "submitted_google_docs"
   end
 
   add_index "participants", ["user_id"], :name => "fk_participant_users"
