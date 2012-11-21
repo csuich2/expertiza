@@ -9,7 +9,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111217162506) do
+ActiveRecord::Schema.define(:version => 20121118061553) do
+
+  create_table "assignment_groups", :force => true do |t|
+    t.string   "name"
+    t.integer  "xp"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "assignment_questionnaires", :force => true do |t|
     t.integer "assignment_id"
@@ -53,8 +60,11 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
     t.integer  "max_reviews_per_submission"
     t.integer  "review_topic_threshold",            :default => 0
     t.boolean  "availability_flag"
+    t.integer  "assignment_group_id"
+    t.integer  "xp"
   end
 
+  add_index "assignments", ["assignment_group_id"], :name => "fk_assignments_group_id"
   add_index "assignments", ["course_id"], :name => "fk_assignments_courses"
   add_index "assignments", ["instructor_id"], :name => "fk_assignments_instructors"
   add_index "assignments", ["review_of_review_questionnaire_id"], :name => "fk_assignments_review_of_review_questionnaires"
@@ -134,6 +144,12 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
   add_index "due_dates", ["review_allowed_id"], :name => "fk_due_date_review_allowed"
   add_index "due_dates", ["review_of_review_allowed_id"], :name => "fk_due_date_review_of_review_allowed"
   add_index "due_dates", ["submission_allowed_id"], :name => "fk_due_date_submission_allowed"
+
+  create_table "games", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "institutions", :force => true do |t|
     t.string "name", :default => "", :null => false
@@ -239,9 +255,9 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
   add_index "question_advices", ["question_id"], :name => "fk_question_question_advices"
 
   create_table "question_types", :force => true do |t|
-    t.string  "q_type",      :default => "", :null => false
+    t.string  "q_type",                     :null => false
     t.string  "parameters"
-    t.integer "question_id", :default => 1,  :null => false
+    t.integer "question_id", :default => 1, :null => false
   end
 
   add_index "question_types", ["question_id"], :name => "fk_question_type_question"
@@ -257,8 +273,8 @@ ActiveRecord::Schema.define(:version => 20111217162506) do
     t.integer  "default_num_choices"
     t.string   "type"
     t.string   "display_type"
-    t.text     "instruction_loc"
     t.string   "section"
+    t.text     "instruction_loc"
   end
 
   create_table "questions", :force => true do |t|
